@@ -1,24 +1,8 @@
-# every minute there is one record, so there are 2*24*60 = 2880 records in 2 days
-originalData <- read.table("household_power_consumption.txt", 
-                           header = FALSE, 
-                           sep = ";", 
-                           na.strings = "?",
-                           skip=grep("^1/2/2007", readLines("household_power_consumption.txt"))-1,
-                           nrows = 2880)
-
-# get header
-header <- read.table("household_power_consumption.txt", 
-                     header = FALSE, 
-                     sep = ";", 
-                     nrows = 1)
-
-# assign the header for the data
-names(originalData) <- as.vector(as.matrix(header))
-
-# create a new column DateTime that combines formatted Date and Time
-originalData$DateTime = strptime(paste(originalData$Date, originalData$Time), "%d/%m/%Y %H:%M:%S")
+source("Init.R")
+originalData <- Init()
 
 # plot with 3 different lines for sub_metering_1/2/3
+par(mfrow = c(1, 1))
 with(originalData, {
     plot(DateTime, 
         Sub_metering_1, 
@@ -39,5 +23,5 @@ with(originalData, {
 })
 
 # copy to .png file
-dev.copy(png, file = "plot3.png", width=480, height=480)  ## Copy my plot to a PNG file
-dev.off() 
+source("Copy2Png.R")
+Copy2Png("plot3.png")
